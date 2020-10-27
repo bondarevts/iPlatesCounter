@@ -7,8 +7,8 @@ import PhotosUI
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var images: [UIImage]
     @Binding var showPicker: Bool
-    var selectionLimit: Int
-
+    var selectionLimit: Int = 1
+    
     func makeUIViewController(context: Context) -> some UIViewController {
         var config = PHPickerConfiguration()
         config.filter = .images

@@ -2,8 +2,11 @@ import SwiftUI
 
 struct MarkedPlateDocumentView: View {
     var body: some View {
-        Text("Hello, world!")
+        Image(systemName: "photo")
+            .resizable()
             .padding()
+            .scaledToFit()
+            .foregroundColor(.gray)
     }
 }
 

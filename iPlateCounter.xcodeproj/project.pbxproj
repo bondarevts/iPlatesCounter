@@ -13,6 +13,7 @@
 		22ACB66F25474C1E00D19DE6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22ACB66E25474C1E00D19DE6 /* Preview Assets.xcassets */; };
 		22ACB67A25474D6F00D19DE6 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACB67925474D6F00D19DE6 /* ImagePicker.swift */; };
 		22CDBA1C254881BB00DC50AB /* MarkedPlateDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CDBA1B254881BB00DC50AB /* MarkedPlateDocument.swift */; };
+		22CDBA1F2548A55600DC50AB /* DetectTapLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CDBA1E2548A55600DC50AB /* DetectTapLocationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		22ACB67825474CE600D19DE6 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		22ACB67925474D6F00D19DE6 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		22CDBA1B254881BB00DC50AB /* MarkedPlateDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkedPlateDocument.swift; sourceTree = "<group>"; };
+		22CDBA1E2548A55600DC50AB /* DetectTapLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectTapLocationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				22ACB67025474C1E00D19DE6 /* Info.plist */,
 				22ACB66D25474C1E00D19DE6 /* Preview Content */,
 				22CDBA1B254881BB00DC50AB /* MarkedPlateDocument.swift */,
+				22CDBA1E2548A55600DC50AB /* DetectTapLocationView.swift */,
 			);
 			path = iPlateCounter;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 				22CDBA1C254881BB00DC50AB /* MarkedPlateDocument.swift in Sources */,
 				22ACB66A25474C1C00D19DE6 /* MarkedPlateDocumentView.swift in Sources */,
 				22ACB66825474C1C00D19DE6 /* iPlateCounterApp.swift in Sources */,
+				22CDBA1F2548A55600DC50AB /* DetectTapLocationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

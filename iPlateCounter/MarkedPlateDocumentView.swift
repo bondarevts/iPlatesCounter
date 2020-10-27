@@ -3,13 +3,26 @@ import SwiftUI
 struct MarkedPlateDocumentView: View {
     @ObservedObject var document = MarkedPlateDocument()
     @State var isPickerActive = false
+    @State var marks: [CGPoint] = []
     
     var body: some View {
         VStack {
             if let image = document.images.first {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+                ZStack {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                    DetectTapLocationView { location in
+                        print("\(location)")
+                        marks.append(location)
+                    }
+                    ForEach(marks, id:\.self) { mark in
+                        Circle()
+                            .frame(width:30, height:30)
+                            .offset(CGSize(width: mark.x, height: mark.y))
+                            .foregroundColor(.red)
+                    }
+                }
             } else {
                 Image(systemName: "photo")
                     .resizable()
@@ -24,6 +37,13 @@ struct MarkedPlateDocumentView: View {
         .sheet(isPresented: $isPickerActive) {
             ImagePicker(images: self.$document.images, showPicker: $isPickerActive)
         }
+    }
+}
+
+extension CGPoint: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(x)
+        hasher.combine(y)
     }
 }
 

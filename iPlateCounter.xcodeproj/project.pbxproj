@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		22ACB66825474C1C00D19DE6 /* iPlateCounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACB66725474C1C00D19DE6 /* iPlateCounterApp.swift */; };
-		22ACB66A25474C1C00D19DE6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACB66925474C1C00D19DE6 /* ContentView.swift */; };
+		22ACB66A25474C1C00D19DE6 /* MarkedPlateDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACB66925474C1C00D19DE6 /* MarkedPlateDocumentView.swift */; };
 		22ACB66C25474C1E00D19DE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22ACB66B25474C1E00D19DE6 /* Assets.xcassets */; };
 		22ACB66F25474C1E00D19DE6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22ACB66E25474C1E00D19DE6 /* Preview Assets.xcassets */; };
 		22ACB67A25474D6F00D19DE6 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACB67925474D6F00D19DE6 /* ImagePicker.swift */; };
@@ -17,7 +17,7 @@
 /* Begin PBXFileReference section */
 		22ACB66425474C1C00D19DE6 /* iPlateCounter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPlateCounter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22ACB66725474C1C00D19DE6 /* iPlateCounterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPlateCounterApp.swift; sourceTree = "<group>"; };
-		22ACB66925474C1C00D19DE6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		22ACB66925474C1C00D19DE6 /* MarkedPlateDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkedPlateDocumentView.swift; sourceTree = "<group>"; };
 		22ACB66B25474C1E00D19DE6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		22ACB66E25474C1E00D19DE6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		22ACB67025474C1E00D19DE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -60,7 +60,7 @@
 			children = (
 				22ACB67925474D6F00D19DE6 /* ImagePicker.swift */,
 				22ACB66725474C1C00D19DE6 /* iPlateCounterApp.swift */,
-				22ACB66925474C1C00D19DE6 /* ContentView.swift */,
+				22ACB66925474C1C00D19DE6 /* MarkedPlateDocumentView.swift */,
 				22ACB66B25474C1E00D19DE6 /* Assets.xcassets */,
 				22ACB67025474C1E00D19DE6 /* Info.plist */,
 				22ACB66D25474C1E00D19DE6 /* Preview Content */,
@@ -146,7 +146,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22ACB67A25474D6F00D19DE6 /* ImagePicker.swift in Sources */,
-				22ACB66A25474C1C00D19DE6 /* ContentView.swift in Sources */,
+				22ACB66A25474C1C00D19DE6 /* MarkedPlateDocumentView.swift in Sources */,
 				22ACB66825474C1C00D19DE6 /* iPlateCounterApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

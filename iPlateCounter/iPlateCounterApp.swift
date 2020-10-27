@@ -4,7 +4,7 @@ import SwiftUI
 struct iPlateCounterApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MarkedPlateDocumentView()
         }
     }
 }

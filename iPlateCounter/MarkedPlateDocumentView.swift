@@ -3,7 +3,6 @@ import SwiftUI
 struct MarkedPlateDocumentView: View {
     @ObservedObject var document = MarkedPlateDocument()
     @State var isPickerActive = false
-    @State var marks: [CGPoint] = []
     @State var showingRemoveAllAlert = false
     let markSize: CGFloat = 30
     let markColor: Color = Color(red:0.0, green: 0.0, blue: 1.0, opacity: 0.4)
@@ -11,16 +10,16 @@ struct MarkedPlateDocumentView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Total count: \(marks.count)")
+                Text("Total count: \(document.marks.count)")
                     .font(.largeTitle)
                     .padding(.horizontal)
                 Spacer()
                 Button("Undo") {
-                    _ = marks.popLast()
+                    document.dropLastMark()
                 }
                 .font(.largeTitle)
                 Button("Remove All") {
-                    if !marks.isEmpty {
+                    if !document.marks.isEmpty {
                         self.showingRemoveAllAlert = true
                     }
                 }
@@ -28,7 +27,7 @@ struct MarkedPlateDocumentView: View {
                 .padding(.horizontal)
                 .alert(isPresented: $showingRemoveAllAlert) {
                     Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
-                        marks.removeAll()
+                        document.clearMarks()
                     }, secondaryButton: .cancel())
                 }
             }
@@ -39,13 +38,13 @@ struct MarkedPlateDocumentView: View {
                             .resizable()
                             .scaledToFit()
                         DetectTapLocationView { location in
-                            marks.append(CGPoint(x: location.x - geometry.size.width / 2,
-                                                 y: location.y - geometry.size.height / 2))
+                            document.addMark(at: CGPoint(x: location.x - geometry.size.width / 2,
+                                                         y: location.y - geometry.size.height / 2), size: markSize)
                         }
-                        ForEach(marks, id:\.self) { mark in
+                        ForEach(self.document.marks) { mark in
                             Circle()
-                                .frame(width: markSize, height: markSize)
-                                .offset(CGSize(width: mark.x, height: mark.y))
+                                .frame(width: mark.s, height: mark.s)
+                                .offset(CGSize(width: mark.location.x, height: mark.location.y))
                                 .foregroundColor(markColor)
                         }
                     }

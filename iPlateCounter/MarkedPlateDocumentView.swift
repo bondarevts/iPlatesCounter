@@ -8,19 +8,21 @@ struct MarkedPlateDocumentView: View {
     var body: some View {
         VStack {
             if let image = document.images.first {
-                ZStack {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                    DetectTapLocationView { location in
-                        print("\(location)")
-                        marks.append(location)
-                    }
-                    ForEach(marks, id:\.self) { mark in
-                        Circle()
-                            .frame(width:30, height:30)
-                            .offset(CGSize(width: mark.x, height: mark.y))
-                            .foregroundColor(.red)
+                GeometryReader { geometry in
+                    ZStack {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                        DetectTapLocationView { location in
+                            marks.append(CGPoint(x: location.x - geometry.size.width / 2,
+                                                 y: location.y - geometry.size.height / 2))
+                        }
+                        ForEach(marks, id:\.self) { mark in
+                            Circle()
+                                .frame(width:30, height:30)
+                                .offset(CGSize(width: mark.x, height: mark.y))
+                                .foregroundColor(.red)
+                        }
                     }
                 }
             } else {

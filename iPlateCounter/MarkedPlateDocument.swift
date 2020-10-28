@@ -7,7 +7,7 @@ class MarkedPlateDocument: ObservableObject {
     var marks: [MarkedPlate.Mark] { plate.marks }
     
     func addMark(at location: CGPoint, size: CGFloat) {
-        plate.addMark(x: Int(location.x), y: Int(location.y), size: Double(size))
+        plate.addMark(x: Int(location.x), y: Int(location.y), diameter: Double(size))
     }
     
     func dropLastMark() {
@@ -22,6 +22,6 @@ class MarkedPlateDocument: ObservableObject {
 
 
 extension MarkedPlate.Mark {
-    var s: CGFloat { CGFloat(self.size) }
+    var s: CGFloat { CGFloat(self.diameter) }
     var location: CGPoint { CGPoint(x: CGFloat(self.x), y: CGFloat(self.y)) }
 }

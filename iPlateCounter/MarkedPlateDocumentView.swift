@@ -6,7 +6,8 @@ struct MarkedPlateDocumentView: View {
     @State var marks: [CGPoint] = []
     @State var showingRemoveAllAlert = false
     let markSize: CGFloat = 30
-
+    let markColor: Color = Color(red:0.0, green: 0.0, blue: 1.0, opacity: 0.4)
+    
     var body: some View {
         VStack {
             HStack {
@@ -45,7 +46,7 @@ struct MarkedPlateDocumentView: View {
                             Circle()
                                 .frame(width: markSize, height: markSize)
                                 .offset(CGSize(width: mark.x, height: mark.y))
-                                .foregroundColor(.red)
+                                .foregroundColor(markColor)
                         }
                     }
                 }

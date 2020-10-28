@@ -4,7 +4,8 @@ struct MarkedPlateDocumentView: View {
     @ObservedObject var document = MarkedPlateDocument()
     @State var isPickerActive = false
     @State var marks: [CGPoint] = []
-    
+    @State var showingRemoveAllAlert = false
+
     var body: some View {
         VStack {
             HStack {
@@ -16,11 +17,18 @@ struct MarkedPlateDocumentView: View {
                     _ = marks.popLast()
                 }
                 .font(.largeTitle)
-                Button("Undo all") {
-                    marks.removeAll()
+                Button("Remove All") {
+                    if !marks.isEmpty {
+                        self.showingRemoveAllAlert = true
+                    }
                 }
                 .font(.largeTitle)
                 .padding(.horizontal)
+                .alert(isPresented: $showingRemoveAllAlert) {
+                    Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
+                        marks.removeAll()
+                    }, secondaryButton: .cancel())
+                }
             }
             if let image = document.images.first {
                 GeometryReader { geometry in

@@ -37,17 +37,16 @@ struct MarkedPlateDocumentView: View {
             if let image = document.image {
                 GeometryReader { geometry in
                     ZStack {
-                        Color.white.overlay(Image(uiImage: image)
+                        Color.white.overlay(Image(uiImage: image))
                             .scaleEffect(zoomScale)
-                            .offset(self.panOffset))
+                            .position(CGPoint(from: panOffset + geometry.size / 2))
                         DetectTapLocationView { location in
-                            let x: CGFloat = (location.x - geometry.size.width / 2) / zoomScale
-                            let y: CGFloat = (location.y - geometry.size.height / 2) / zoomScale
-                            document.addMark(at: CGPoint(x: x, y: y), diameter: markSize)
+                            document.addMark(at: markLocation(tap: location, size: geometry.size), diameter: markSize)
                         }
                         ForEach(self.document.marks) { mark in
                             Circle()
-                                .frame(width: mark.s * zoomScale, height: mark.s * zoomScale)
+                                .frame(width: mark.s, height: mark.s)
+                                .scaleEffect(zoomScale)
                                 .position(self.position(for: mark, in: geometry.size))
                                 .foregroundColor(markColor)
                         }
@@ -108,11 +107,11 @@ struct MarkedPlateDocumentView: View {
     }
     
     private func position(for mark: MarkedPlate.Mark, in size: CGSize) -> CGPoint {
-        var location = mark.location
-        location = CGPoint(x: location.x * zoomScale, y: location.y * zoomScale)
-        location = CGPoint(x: location.x + size.width / 2, y: location.y + size.height / 2)
-        location = CGPoint(x: location.x + panOffset.width, y: location.y + panOffset.height)
-        return location
+        (mark.location * zoomScale).offset(with: panOffset + size / 2)
+    }
+    
+    private func markLocation(tap location: CGPoint, size: CGSize) -> CGPoint {
+        location.offset(with: -panOffset - size / 2) / zoomScale
     }
 }
 
@@ -120,11 +119,38 @@ extension CGSize {
     static func +(size1: Self, size2: Self) -> CGSize {
         CGSize(width: size1.width + size2.width, height: size1.height + size2.height)
     }
+    static func -(size1: Self, size2: Self) -> CGSize {
+        CGSize(width: size1.width - size2.width, height: size1.height - size2.height)
+    }
     static func *(size: Self, value: CGFloat) -> CGSize {
         CGSize(width: size.width * value, height: size.height * value)
     }
     static func /(size: Self, value: CGFloat) -> CGSize {
         CGSize(width: size.width / value, height: size.height / value)
+    }
+    static prefix func -(size: Self) -> CGSize {
+        CGSize(width: -size.width, height: -size.height)
+    }
+}
+
+extension CGPoint {
+    static func *(point: Self, value: CGFloat) -> CGPoint {
+        CGPoint(x: point.x * value, y: point.y * value)
+    }
+    static func /(point: Self, value: CGFloat) -> CGPoint {
+        CGPoint(x: point.x / value, y: point.y / value)
+    }
+    func offset(with size: CGSize) -> CGPoint {
+        CGPoint(x: x + size.width, y: y + size.height)
+    }
+    init(from size: CGSize) {
+        self.init(x: size.width, y: size.height)
+    }
+}
+
+extension View {
+    func frame(size: CGSize, alignment: Alignment = .center) -> some View {
+        self.frame(width: size.width, height: size.height, alignment: alignment)
     }
 }
 

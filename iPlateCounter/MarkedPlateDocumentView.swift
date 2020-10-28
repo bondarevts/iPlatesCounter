@@ -7,6 +7,14 @@ struct MarkedPlateDocumentView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Text("Total count: \(marks.count)")
+                    .font(.largeTitle)
+                Button("Undo") {
+                    _ = marks.popLast()
+                }
+                .font(.largeTitle)
+            }
             if let image = document.images.first {
                 GeometryReader { geometry in
                     ZStack {

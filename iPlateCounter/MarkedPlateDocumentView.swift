@@ -37,20 +37,25 @@ struct MarkedPlateDocumentView: View {
             if let image = document.images.first {
                 GeometryReader { geometry in
                     ZStack {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
+                        Color.white.overlay(Image(uiImage: image)
+                            .scaleEffect(zoomScale)
+                            .offset(self.panOffset))
                         DetectTapLocationView { location in
-                            document.addMark(at: CGPoint(x: location.x - geometry.size.width / 2,
-                                                         y: location.y - geometry.size.height / 2), size: markSize)
+                            let x: CGFloat = (location.x - geometry.size.width / 2) / zoomScale
+                            let y: CGFloat = (location.y - geometry.size.height / 2) / zoomScale
+                            document.addMark(at: CGPoint(x: x, y: y), size: markSize)
                         }
                         ForEach(self.document.marks) { mark in
                             Circle()
-                                .frame(width: mark.s, height: mark.s)
-                                .offset(CGSize(width: mark.location.x, height: mark.location.y))
+                                .frame(width: mark.s * zoomScale, height: mark.s * zoomScale)
+                                .position(self.position(for: mark, in: geometry.size))
                                 .foregroundColor(markColor)
                         }
                     }
+                    .clipped()
+                    .gesture(self.panGesture())
+                    .gesture(self.zoomGesture())
+                    .edgesIgnoringSafeArea([.horizontal, .bottom])
                 }
             } else {
                 Image(systemName: "photo")
@@ -67,12 +72,59 @@ struct MarkedPlateDocumentView: View {
             ImagePicker(images: self.$document.images, showPicker: $isPickerActive)
         }
     }
+    
+    @State private var steadyStateZoomScale: CGFloat = 1.0
+    @GestureState private var gestureZoomScale: CGFloat = 1.0
+    
+    private var zoomScale: CGFloat {
+        steadyStateZoomScale * gestureZoomScale
+    }
+    
+    private func zoomGesture() -> some Gesture {
+        MagnificationGesture()
+            .updating($gestureZoomScale) { latestGestureScale, gestureZoomState, _ in
+                gestureZoomState = latestGestureScale
+            }
+            .onEnded { finalGestureScale in
+                self.steadyStateZoomScale *= finalGestureScale
+            }
+    }
+
+    @State private var steadyStatePanOffset: CGSize = .zero
+    @GestureState private var gesturePanOffset: CGSize = .zero
+    
+    private var panOffset: CGSize {
+        (steadyStatePanOffset + gesturePanOffset) * zoomScale
+    }
+    
+    private func panGesture() -> some Gesture {
+        DragGesture()
+            .updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, _ in
+                gesturePanOffset = latestDragGestureValue.translation / self.zoomScale
+            }
+            .onEnded { finalDragGestureValue in
+                self.steadyStatePanOffset = self.steadyStatePanOffset + finalDragGestureValue.translation / zoomScale
+            }
+    }
+    
+    private func position(for mark: MarkedPlate.Mark, in size: CGSize) -> CGPoint {
+        var location = mark.location
+        location = CGPoint(x: location.x * zoomScale, y: location.y * zoomScale)
+        location = CGPoint(x: location.x + size.width / 2, y: location.y + size.height / 2)
+        location = CGPoint(x: location.x + panOffset.width, y: location.y + panOffset.height)
+        return location
+    }
 }
 
-extension CGPoint: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(x)
-        hasher.combine(y)
+extension CGSize {
+    static func +(size1: Self, size2: Self) -> CGSize {
+        CGSize(width: size1.width + size2.width, height: size1.height + size2.height)
+    }
+    static func *(size: Self, value: CGFloat) -> CGSize {
+        CGSize(width: size.width * value, height: size.height * value)
+    }
+    static func /(size: Self, value: CGFloat) -> CGSize {
+        CGSize(width: size.width / value, height: size.height / value)
     }
 }
 

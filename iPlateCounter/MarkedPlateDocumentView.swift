@@ -34,6 +34,7 @@ struct MarkedPlateDocumentView: View {
                     }, secondaryButton: .cancel())
                 }
             }
+            .zIndex(1)
             if let image = document.image {
                 GeometryReader { geometry in
                     ZStack {

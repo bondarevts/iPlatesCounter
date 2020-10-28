@@ -34,7 +34,7 @@ struct MarkedPlateDocumentView: View {
                     }, secondaryButton: .cancel())
                 }
             }
-            if let image = document.images.first {
+            if let image = document.image {
                 GeometryReader { geometry in
                     ZStack {
                         Color.white.overlay(Image(uiImage: image)

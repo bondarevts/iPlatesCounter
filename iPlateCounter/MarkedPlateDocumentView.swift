@@ -4,7 +4,8 @@ struct MarkedPlateDocumentView: View {
     @ObservedObject var document = MarkedPlateDocument()
     @State var isPickerActive = false
     @State var showingRemoveAllAlert = false
-    let markSize: CGFloat = 30
+    @State var markSize: CGFloat = 30
+    let markSizeRange: ClosedRange<CGFloat> = 1...100
     let markColor: Color = Color(red:0.0, green: 0.0, blue: 1.0, opacity: 0.4)
     
     var body: some View {
@@ -14,6 +15,8 @@ struct MarkedPlateDocumentView: View {
                     .font(.largeTitle)
                     .padding(.horizontal)
                 Spacer()
+                Slider(value: $markSize, in: markSizeRange, step: 1)
+                Text("\(Int(markSize))")
                 Button("Undo") {
                     document.dropLastMark()
                 }

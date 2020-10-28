@@ -5,6 +5,7 @@ struct MarkedPlateDocumentView: View {
     @State var isPickerActive = false
     @State var marks: [CGPoint] = []
     @State var showingRemoveAllAlert = false
+    let markSize: CGFloat = 30
 
     var body: some View {
         VStack {
@@ -42,7 +43,7 @@ struct MarkedPlateDocumentView: View {
                         }
                         ForEach(marks, id:\.self) { mark in
                             Circle()
-                                .frame(width:30, height:30)
+                                .frame(width: markSize, height: markSize)
                                 .offset(CGSize(width: mark.x, height: mark.y))
                                 .foregroundColor(.red)
                         }

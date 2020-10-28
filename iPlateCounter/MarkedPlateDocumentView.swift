@@ -43,7 +43,7 @@ struct MarkedPlateDocumentView: View {
                         DetectTapLocationView { location in
                             let x: CGFloat = (location.x - geometry.size.width / 2) / zoomScale
                             let y: CGFloat = (location.y - geometry.size.height / 2) / zoomScale
-                            document.addMark(at: CGPoint(x: x, y: y), size: markSize)
+                            document.addMark(at: CGPoint(x: x, y: y), diameter: markSize)
                         }
                         ForEach(self.document.marks) { mark in
                             Circle()

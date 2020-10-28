@@ -14,6 +14,10 @@ struct MarkedPlateDocumentView: View {
                     _ = marks.popLast()
                 }
                 .font(.largeTitle)
+                Button("Undo all") {
+                    marks.removeAll()
+                }
+                .font(.largeTitle)
             }
             if let image = document.images.first {
                 GeometryReader { geometry in

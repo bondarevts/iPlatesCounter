@@ -10,6 +10,8 @@ struct MarkedPlateDocumentView: View {
             HStack {
                 Text("Total count: \(marks.count)")
                     .font(.largeTitle)
+                    .padding(.horizontal)
+                Spacer()
                 Button("Undo") {
                     _ = marks.popLast()
                 }
@@ -18,6 +20,7 @@ struct MarkedPlateDocumentView: View {
                     marks.removeAll()
                 }
                 .font(.largeTitle)
+                .padding(.horizontal)
             }
             if let image = document.images.first {
                 GeometryReader { geometry in

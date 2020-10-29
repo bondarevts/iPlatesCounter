@@ -12,7 +12,6 @@ struct MarkedPlateDocumentView: View {
         VStack {
             HStack {
                 Text("Total count: \(document.marks.count)")
-                    .font(.largeTitle)
                     .padding(.horizontal)
                 Spacer()
                 Slider(value: $markSize, in: markSizeRange, step: 1)
@@ -20,20 +19,31 @@ struct MarkedPlateDocumentView: View {
                 Button("Undo") {
                     document.dropLastMark()
                 }
-                .font(.largeTitle)
                 Button("Remove All") {
                     if !document.marks.isEmpty {
                         self.showingRemoveAllAlert = true
                     }
                 }
-                .font(.largeTitle)
                 .padding(.horizontal)
                 .alert(isPresented: $showingRemoveAllAlert) {
                     Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
                         document.clearMarks()
                     }, secondaryButton: .cancel())
                 }
+
+                Button(action: {
+                    let center = document.image!.size / 2
+                    let string = Array.joined(
+                        document.marks
+                            .map { mark in "\(Int(center.width + CGFloat(mark.x))),\(Int(center.height + CGFloat(mark.y))),\(Int(mark.diameter))" }
+                    )(separator: "\n")
+                    UIPasteboard.general.string = string
+                }) {
+                    Image(systemName: "doc.on.doc")
+                }
+                .padding(.horizontal)
             }
+            .font(.largeTitle)
             .zIndex(1)
             if let image = document.image {
                 GeometryReader { geometry in

@@ -18,7 +18,7 @@ struct MarkedPlateDocumentView: View {
                 }
                 .padding(.horizontal)
                 Text("Total: \(document.marks.count)")
-                Spacer()
+                Spacer(minLength: 50)
                 Slider(value: $markSize, in: markSizeRange, step: 1)
                 Text("\(Int(markSize))")
                 Button("Undo") {

@@ -2,7 +2,11 @@ import SwiftUI
 
 class MarkedPlateDocument: ObservableObject {
     @Published private var plate = MarkedPlate()
-    @Published var images: [UIImage] = []
+    @Published var images: [UIImage] = [] {
+        didSet {
+            clearMarks()
+        }
+    }
     var image: UIImage? { images.first }
     
     var marks: [MarkedPlate.Mark] { plate.marks }

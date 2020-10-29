@@ -41,6 +41,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                         guard let image1 = image else {return}
                         
                         DispatchQueue.main.async {
+                            self.parent.images.removeAll()
                             self.parent.images.append(image1 as! UIImage)
                         }
                     }

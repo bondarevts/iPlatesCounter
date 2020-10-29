@@ -11,8 +11,13 @@ struct MarkedPlateDocumentView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Total count: \(document.marks.count)")
-                    .padding(.horizontal)
+                Button(action: {
+                    isPickerActive = true
+                }) {
+                    Image(systemName: "folder")
+                }
+                .padding(.horizontal)
+                Text("Total: \(document.marks.count)")
                 Spacer()
                 Slider(value: $markSize, in: markSizeRange, step: 1)
                 Text("\(Int(markSize))")

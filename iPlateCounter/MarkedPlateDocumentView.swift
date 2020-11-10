@@ -53,6 +53,7 @@ struct PlatesView: View {
                 }
             }
         }
+        .zIndex(-1)
         .gesture(self.panGesture())
         .gesture(self.zoomGesture())
     }
@@ -165,7 +166,6 @@ struct ControlPanel: View {
             .padding(.horizontal)
         }
         .font(.largeTitle)
-        .zIndex(1)
     }
 }
 

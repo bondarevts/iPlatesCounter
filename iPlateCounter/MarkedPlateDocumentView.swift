@@ -57,6 +57,7 @@ struct MarkedPlateDocumentView: View {
                 .edgesIgnoringSafeArea([.horizontal, .bottom])
             } else {
                 NoImageView()
+                    .contentShape(Rectangle())
                     .onTapGesture {
                         isPickerActive.toggle()
                     }

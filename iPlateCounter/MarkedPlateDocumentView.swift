@@ -83,7 +83,7 @@ struct PlatesView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.white.overlay(Image(uiImage: image))
+                Image(uiImage: image)
                     .scaleEffect(zoomScale)
                     .position(CGPoint(from: panOffset + geometry.size / 2))
                 DetectTapLocationView { tap in

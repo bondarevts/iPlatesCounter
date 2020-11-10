@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22AA6053255A25440064E591 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22AA6052255A25430064E591 /* UIExtensions.swift */; };
 		22ACB66825474C1C00D19DE6 /* iPlateCounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACB66725474C1C00D19DE6 /* iPlateCounterApp.swift */; };
 		22ACB66A25474C1C00D19DE6 /* MarkedPlateDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACB66925474C1C00D19DE6 /* MarkedPlateDocumentView.swift */; };
 		22ACB66C25474C1E00D19DE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22ACB66B25474C1E00D19DE6 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		22AA6052255A25430064E591 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
 		22ACB66425474C1C00D19DE6 /* iPlateCounter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPlateCounter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22ACB66725474C1C00D19DE6 /* iPlateCounterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPlateCounterApp.swift; sourceTree = "<group>"; };
 		22ACB66925474C1C00D19DE6 /* MarkedPlateDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkedPlateDocumentView.swift; sourceTree = "<group>"; };
@@ -64,15 +66,16 @@
 		22ACB66625474C1C00D19DE6 /* iPlateCounter */ = {
 			isa = PBXGroup;
 			children = (
-				22ACB67925474D6F00D19DE6 /* ImagePicker.swift */,
 				22ACB66725474C1C00D19DE6 /* iPlateCounterApp.swift */,
+				22CDBA26254919AA00DC50AB /* Plate.swift */,
+				22CDBA1B254881BB00DC50AB /* MarkedPlateDocument.swift */,
 				22ACB66925474C1C00D19DE6 /* MarkedPlateDocumentView.swift */,
 				22ACB66B25474C1E00D19DE6 /* Assets.xcassets */,
-				22ACB67025474C1E00D19DE6 /* Info.plist */,
-				22ACB66D25474C1E00D19DE6 /* Preview Content */,
-				22CDBA1B254881BB00DC50AB /* MarkedPlateDocument.swift */,
 				22CDBA1E2548A55600DC50AB /* DetectTapLocationView.swift */,
-				22CDBA26254919AA00DC50AB /* Plate.swift */,
+				22ACB67925474D6F00D19DE6 /* ImagePicker.swift */,
+				22AA6052255A25430064E591 /* UIExtensions.swift */,
+				22ACB66D25474C1E00D19DE6 /* Preview Content */,
+				22ACB67025474C1E00D19DE6 /* Info.plist */,
 			);
 			path = iPlateCounter;
 			sourceTree = "<group>";
@@ -160,6 +163,7 @@
 				22ACB66825474C1C00D19DE6 /* iPlateCounterApp.swift in Sources */,
 				22CDBA27254919AA00DC50AB /* Plate.swift in Sources */,
 				22CDBA1F2548A55600DC50AB /* DetectTapLocationView.swift in Sources */,
+				22AA6053255A25440064E591 /* UIExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -27,6 +27,6 @@ class MarkedPlateDocument: ObservableObject {
 
 
 extension MarkedPlate.Mark {
-    var s: CGFloat { CGFloat(self.diameter) }
+    var size: CGFloat { CGFloat(self.diameter) }
     var location: CGPoint { CGPoint(x: CGFloat(self.x), y: CGFloat(self.y)) }
 }

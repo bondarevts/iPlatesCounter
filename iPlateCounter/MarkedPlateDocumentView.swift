@@ -46,7 +46,7 @@ struct PlatesView: View {
                 }
                 ForEach(marks) { mark in
                     Circle()
-                        .frame(width: mark.s, height: mark.s)
+                        .frame(width: mark.size, height: mark.size)
                         .scaleEffect(zoomScale)
                         .position(self.position(for: mark, in: geometry.size))
                         .foregroundColor(markColor)

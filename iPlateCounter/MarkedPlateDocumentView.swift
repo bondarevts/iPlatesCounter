@@ -125,31 +125,66 @@ struct ControlPanel: View {
     @Binding var isPickerActive: Bool
     @Binding var markSize: CGFloat
     @State var showingRemoveAllAlert = false
+    @State var showingDiameterSlider = false
 
     var body: some View {
-        HStack(spacing: 20) {
-            Button(action: { isPickerActive = true }, label: { Image(systemName: "folder") })
-
-            Text("Total: \(document.marks.count)")
-            Slider(value: $markSize, in: markSizeRange, step: 1)
-            Text("\(Int(markSize))")
-
-            Button("Undo") { document.dropLastMark() }
-            Button("Remove All") {
-                if !document.marks.isEmpty {
-                    self.showingRemoveAllAlert = true
+        VStack {
+            HStack {
+                Button(
+                    action: { isPickerActive = true },
+                    label: {
+                        HStack {
+                            Image(systemName: "folder")
+                            Text("Open...")
+                        }
+                    }
+                )
+                Spacer()
+                Button(
+                    action: {
+                        UIPasteboard.general.string = marksToString()
+                    },
+                    label: { HStack {
+                        Image(systemName: "arrow.up.doc.on.clipboard")
+                        Text("Copy marks...")
+                    }}
+                )
+            }
+            HStack(spacing: 20) {
+                Button(
+                    action: { document.dropLastMark() },
+                    label: { Image(systemName: "arrowshape.turn.up.backward.fill") }
+                )
+                Button(
+                    action: {
+                        if !document.marks.isEmpty {
+                            self.showingRemoveAllAlert = true
+                        }
+                    },
+                    label: { Image(systemName: "arrowshape.turn.up.left.2.fill") }
+                )
+                .alert(isPresented: $showingRemoveAllAlert) {
+                    Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
+                        document.clearMarks()
+                    }, secondaryButton: .cancel())
                 }
+                Button(
+                    action: { showingDiameterSlider = true },
+                    label: { Text("⌀ \(Int(markSize))") }
+                )
+                .padding(.leading)
+                .popover(isPresented: $showingDiameterSlider) {
+                    VStack(alignment: .leading) {
+                        Text("Mark Diameter")
+                            .font(.title)
+                        Slider(value: $markSize, in: markSizeRange, step: 1)
+                            .frame(minWidth: 300)
+                    }
+                    .padding()
+                }
+                Spacer()
+                Text("Total: \(document.marks.count)")
             }
-            .alert(isPresented: $showingRemoveAllAlert) {
-                Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
-                    document.clearMarks()
-                }, secondaryButton: .cancel())
-            }
-
-            Button(
-                action: { UIPasteboard.general.string = marksToString() },
-                label: { Image(systemName: "arrow.up.doc.on.clipboard") }
-            )
         }
         .padding(.horizontal)
         .font(.largeTitle)

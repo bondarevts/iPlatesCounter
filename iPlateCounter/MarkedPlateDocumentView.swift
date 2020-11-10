@@ -127,45 +127,40 @@ struct ControlPanel: View {
     @State var showingRemoveAllAlert = false
 
     var body: some View {
-        HStack {
-            Button(action: {
-                isPickerActive = true
-            }) {
-                Image(systemName: "folder")
-            }
-            .padding(.horizontal)
+        HStack(spacing: 20) {
+            Button(action: { isPickerActive = true }, label: { Image(systemName: "folder") })
+
             Text("Total: \(document.marks.count)")
-            Spacer(minLength: 50)
             Slider(value: $markSize, in: markSizeRange, step: 1)
             Text("\(Int(markSize))")
-            Button("Undo") {
-                document.dropLastMark()
-            }
+
+            Button("Undo") { document.dropLastMark() }
             Button("Remove All") {
                 if !document.marks.isEmpty {
                     self.showingRemoveAllAlert = true
                 }
             }
-            .padding(.horizontal)
             .alert(isPresented: $showingRemoveAllAlert) {
                 Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
                     document.clearMarks()
                 }, secondaryButton: .cancel())
             }
 
-            Button(action: {
-                let center = document.image!.size / 2
-                let string = Array.joined(
-                    document.marks
-                        .map { mark in "\(Int(center.width + CGFloat(mark.x))),\(Int(center.height + CGFloat(mark.y))),\(Int(mark.diameter))" }
-                )(separator: "\n")
-                UIPasteboard.general.string = string
-            }) {
-                Image(systemName: "doc.on.doc")
-            }
-            .padding(.horizontal)
+            Button(
+                action: { UIPasteboard.general.string = marksToString() },
+                label: { Image(systemName: "arrow.up.doc.on.clipboard") }
+            )
         }
+        .padding(.horizontal)
         .font(.largeTitle)
+    }
+
+    func marksToString() -> String {
+        let center = document.image!.size / 2
+        return Array.joined(
+            document.marks
+                .map { mark in "\(Int(center.width + CGFloat(mark.x))),\(Int(center.height + CGFloat(mark.y))),\(Int(mark.diameter))" }
+        )(separator: "\n")
     }
 }
 

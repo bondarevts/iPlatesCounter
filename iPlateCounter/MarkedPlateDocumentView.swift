@@ -3,52 +3,11 @@ import SwiftUI
 struct MarkedPlateDocumentView: View {
     @ObservedObject var document = MarkedPlateDocument()
     @State var isPickerActive = false
-    @State var showingRemoveAllAlert = false
     @State var markSize: CGFloat = 30
-    let markSizeRange: ClosedRange<CGFloat> = 1...100
     
     var body: some View {
         VStack {
-            HStack {
-                Button(action: {
-                    isPickerActive = true
-                }) {
-                    Image(systemName: "folder")
-                }
-                .padding(.horizontal)
-                Text("Total: \(document.marks.count)")
-                Spacer(minLength: 50)
-                Slider(value: $markSize, in: markSizeRange, step: 1)
-                Text("\(Int(markSize))")
-                Button("Undo") {
-                    document.dropLastMark()
-                }
-                Button("Remove All") {
-                    if !document.marks.isEmpty {
-                        self.showingRemoveAllAlert = true
-                    }
-                }
-                .padding(.horizontal)
-                .alert(isPresented: $showingRemoveAllAlert) {
-                    Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
-                        document.clearMarks()
-                    }, secondaryButton: .cancel())
-                }
-
-                Button(action: {
-                    let center = document.image!.size / 2
-                    let string = Array.joined(
-                        document.marks
-                            .map { mark in "\(Int(center.width + CGFloat(mark.x))),\(Int(center.height + CGFloat(mark.y))),\(Int(mark.diameter))" }
-                    )(separator: "\n")
-                    UIPasteboard.general.string = string
-                }) {
-                    Image(systemName: "doc.on.doc")
-                }
-                .padding(.horizontal)
-            }
-            .font(.largeTitle)
-            .zIndex(1)
+            ControlPanel(document: document, isPickerActive: $isPickerActive, markSize: $markSize)
             if let image = document.image {
                 PlatesView(marks: document.marks, image: image) { tap in
                     document.addMark(at: tap, diameter: markSize)
@@ -155,6 +114,58 @@ struct NoImageView: View {
             .frame(width: geometry.size.width * 0.75)
             .position(CGPoint(from: geometry.size / 2))
         }
+    }
+}
+
+struct ControlPanel: View {
+    private let markSizeRange: ClosedRange<CGFloat> = 1...100
+
+    @ObservedObject var document: MarkedPlateDocument
+    @Binding var isPickerActive: Bool
+    @Binding var markSize: CGFloat
+    @State var showingRemoveAllAlert = false
+
+    var body: some View {
+        HStack {
+            Button(action: {
+                isPickerActive = true
+            }) {
+                Image(systemName: "folder")
+            }
+            .padding(.horizontal)
+            Text("Total: \(document.marks.count)")
+            Spacer(minLength: 50)
+            Slider(value: $markSize, in: markSizeRange, step: 1)
+            Text("\(Int(markSize))")
+            Button("Undo") {
+                document.dropLastMark()
+            }
+            Button("Remove All") {
+                if !document.marks.isEmpty {
+                    self.showingRemoveAllAlert = true
+                }
+            }
+            .padding(.horizontal)
+            .alert(isPresented: $showingRemoveAllAlert) {
+                Alert(title: Text("Remove all marks?"), primaryButton: .destructive(Text("Remove All")) {
+                    document.clearMarks()
+                }, secondaryButton: .cancel())
+            }
+
+            Button(action: {
+                let center = document.image!.size / 2
+                let string = Array.joined(
+                    document.marks
+                        .map { mark in "\(Int(center.width + CGFloat(mark.x))),\(Int(center.height + CGFloat(mark.y))),\(Int(mark.diameter))" }
+                )(separator: "\n")
+                UIPasteboard.general.string = string
+            }) {
+                Image(systemName: "doc.on.doc")
+            }
+            .padding(.horizontal)
+        }
+        .font(.largeTitle)
+        .zIndex(1)
     }
 }
 

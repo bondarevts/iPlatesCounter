@@ -6,7 +6,6 @@ struct MarkedPlateDocumentView: View {
     @State var showingRemoveAllAlert = false
     @State var markSize: CGFloat = 30
     let markSizeRange: ClosedRange<CGFloat> = 1...100
-    let markColor: Color = Color(red:0.0, green: 0.0, blue: 1.0, opacity: 0.4)
     
     var body: some View {
         VStack {
@@ -51,50 +50,65 @@ struct MarkedPlateDocumentView: View {
             .font(.largeTitle)
             .zIndex(1)
             if let image = document.image {
-                GeometryReader { geometry in
-                    ZStack {
-                        Color.white.overlay(Image(uiImage: image))
-                            .scaleEffect(zoomScale)
-                            .position(CGPoint(from: panOffset + geometry.size / 2))
-                        DetectTapLocationView { location in
-                            document.addMark(at: markLocation(tap: location, size: geometry.size), diameter: markSize)
-                        }
-                        ForEach(self.document.marks) { mark in
-                            Circle()
-                                .frame(width: mark.s, height: mark.s)
-                                .scaleEffect(zoomScale)
-                                .position(self.position(for: mark, in: geometry.size))
-                                .foregroundColor(markColor)
-                        }
-                    }
-                    .clipped()
-                    .gesture(self.panGesture())
-                    .gesture(self.zoomGesture())
-                    .edgesIgnoringSafeArea([.horizontal, .bottom])
+                PlatesView(marks: document.marks, image: image) { tap in
+                    document.addMark(at: tap, diameter: markSize)
                 }
+                .clipped()
+                .edgesIgnoringSafeArea([.horizontal, .bottom])
+
             } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .padding()
-                    .scaledToFit()
-                    .foregroundColor(.gray)
-                    .onTapGesture {
-                        isPickerActive.toggle()
-                    }
+                GeometryReader { geometry in
+                    Image(systemName: "photo")
+                        .foregroundColor(.gray)
+                        .frame(size: geometry.size * 2/3)
+                        .onTapGesture {
+                            isPickerActive.toggle()
+                        }
+                }
             }
         }
         .sheet(isPresented: $isPickerActive) {
             ImagePicker(images: self.$document.images, showPicker: $isPickerActive)
         }
     }
-    
+}
+
+
+struct PlatesView: View {
+    private let markColor: Color = Color(red:0.0, green: 0.0, blue: 1.0, opacity: 0.4)
+    var marks: [MarkedPlate.Mark]
+    let image: UIImage
+    let onTap: (CGPoint) -> Void
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Color.white.overlay(Image(uiImage: image))
+                    .scaleEffect(zoomScale)
+                    .position(CGPoint(from: panOffset + geometry.size / 2))
+                DetectTapLocationView { tap in
+                    onTap(markLocation(tap: tap, size: geometry.size))
+                }
+                ForEach(marks) { mark in
+                    Circle()
+                        .frame(width: mark.s, height: mark.s)
+                        .scaleEffect(zoomScale)
+                        .position(self.position(for: mark, in: geometry.size))
+                        .foregroundColor(markColor)
+                }
+            }
+        }
+        .gesture(self.panGesture())
+        .gesture(self.zoomGesture())
+    }
+
     @State private var steadyStateZoomScale: CGFloat = 1.0
     @GestureState private var gestureZoomScale: CGFloat = 1.0
-    
+
     private var zoomScale: CGFloat {
         steadyStateZoomScale * gestureZoomScale
     }
-    
+
     private func zoomGesture() -> some Gesture {
         MagnificationGesture()
             .updating($gestureZoomScale) { latestGestureScale, gestureZoomState, _ in
@@ -107,11 +121,11 @@ struct MarkedPlateDocumentView: View {
 
     @State private var steadyStatePanOffset: CGSize = .zero
     @GestureState private var gesturePanOffset: CGSize = .zero
-    
+
     private var panOffset: CGSize {
         (steadyStatePanOffset + gesturePanOffset) * zoomScale
     }
-    
+
     private func panGesture() -> some Gesture {
         DragGesture()
             .updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, _ in
@@ -121,15 +135,16 @@ struct MarkedPlateDocumentView: View {
                 self.steadyStatePanOffset = self.steadyStatePanOffset + finalDragGestureValue.translation / zoomScale
             }
     }
-    
+
     private func position(for mark: MarkedPlate.Mark, in size: CGSize) -> CGPoint {
         (mark.location * zoomScale).offset(with: panOffset + size / 2)
     }
-    
+
     private func markLocation(tap location: CGPoint, size: CGSize) -> CGPoint {
         location.offset(with: -panOffset - size / 2) / zoomScale
     }
 }
+
 
 struct MarkedPlateDocumentView_Previews: PreviewProvider {
     static var previews: some View {

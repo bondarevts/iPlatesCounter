@@ -55,16 +55,11 @@ struct MarkedPlateDocumentView: View {
                 }
                 .clipped()
                 .edgesIgnoringSafeArea([.horizontal, .bottom])
-
             } else {
-                GeometryReader { geometry in
-                    Image(systemName: "photo")
-                        .foregroundColor(.gray)
-                        .frame(size: geometry.size * 2/3)
-                        .onTapGesture {
-                            isPickerActive.toggle()
-                        }
-                }
+                NoImageView()
+                    .onTapGesture {
+                        isPickerActive.toggle()
+                    }
             }
         }
         .sheet(isPresented: $isPickerActive) {
@@ -145,6 +140,22 @@ struct PlatesView: View {
     }
 }
 
+struct NoImageView: View {
+    var body: some View {
+        GeometryReader { geometry in
+            VStack() {
+                Text("Tap to open an image")
+                    .font(.largeTitle)
+                Image(systemName: "photo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            }
+            .foregroundColor(.gray)
+            .frame(width: geometry.size.width * 0.75)
+            .position(CGPoint(from: geometry.size / 2))
+        }
+    }
+}
 
 struct MarkedPlateDocumentView_Previews: PreviewProvider {
     static var previews: some View {

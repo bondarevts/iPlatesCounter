@@ -7,7 +7,11 @@ struct MarkedPlateDocumentView: View {
     
     var body: some View {
         VStack {
-            ControlPanel(document: document, isPickerActive: $isPickerActive, markSize: $markSize)
+            ControlPanel(
+                document: document,
+                isPickerActive: $isPickerActive,
+                markSize: $markSize
+            )
             if let image = document.image {
                 PlatesView(marks: document.marks, image: image) { tap in
                     document.addMark(at: tap, diameter: markSize)
@@ -119,37 +123,36 @@ struct NoImageView: View {
 }
 
 struct ControlPanel: View {
-    private let markSizeRange: ClosedRange<CGFloat> = 1...100
-
     @ObservedObject var document: MarkedPlateDocument
     @Binding var isPickerActive: Bool
     @Binding var markSize: CGFloat
     @State var showingRemoveAllAlert = false
-    @State var showingDiameterSlider = false
+    @State var showingPreferences = false
 
     var body: some View {
         VStack {
             HStack {
                 Button(
                     action: { isPickerActive = true },
-                    label: {
-                        HStack {
-                            Image(systemName: "folder")
-                            Text("Open...")
-                        }
-                    }
+                    label: { Label("Open...", systemImage: "folder") }
                 )
                 Spacer()
                 Button(
-                    action: {
-                        UIPasteboard.general.string = marksToString()
-                    },
-                    label: { HStack {
-                        Image(systemName: "arrow.up.doc.on.clipboard")
-                        Text("Copy marks...")
-                    }}
+                    action: { UIPasteboard.general.string = marksToString() },
+                    label: { Label("Copy marks...", systemImage: "arrow.up.doc.on.clipboard") }
                 )
+                Button(
+                    action: { showingPreferences = true },
+                    label: { Image(systemName: "ellipsis").imageScale(.large) }
+                )
+                .contentShape(Rectangle())
+                .padding(.leading, 20)
+                .popover(isPresented: $showingPreferences) {
+                    PreferencesView(markSize: $markSize)
+                        .frame(width: 300, height: 145)
+                }
             }
+            .padding(.bottom, 5)
             HStack(spacing: 20) {
                 Button(
                     action: { document.dropLastMark() },
@@ -168,20 +171,6 @@ struct ControlPanel: View {
                         document.clearMarks()
                     }, secondaryButton: .cancel())
                 }
-                Button(
-                    action: { showingDiameterSlider = true },
-                    label: { Text("⌀ \(Int(markSize))") }
-                )
-                .padding(.leading)
-                .popover(isPresented: $showingDiameterSlider) {
-                    VStack(alignment: .leading) {
-                        Text("Mark Diameter")
-                            .font(.title)
-                        Slider(value: $markSize, in: markSizeRange, step: 1)
-                            .frame(minWidth: 300)
-                    }
-                    .padding()
-                }
                 Spacer()
                 Text("Total: \(document.marks.count)")
             }
@@ -199,8 +188,32 @@ struct ControlPanel: View {
     }
 }
 
+struct PreferencesView: View {
+    private let markSizeRange: ClosedRange<CGFloat> = 1...100
+    @Binding var markSize: CGFloat
+
+    var body: some View {
+        List {
+            VStack(alignment: .leading) {
+                Text("Mark Diameter")
+                HStack {
+                    Text("\(Int(markSize))")
+                        .frame(minWidth: 30, alignment: .leading)
+                    Slider(value: $markSize, in: markSizeRange, step: 1)
+                        .frame(minWidth: 200)
+                }
+            }
+        }
+        .font(.subheadline)
+        .padding()
+    }
+}
+
 struct MarkedPlateDocumentView_Previews: PreviewProvider {
     static var previews: some View {
         MarkedPlateDocumentView()
+
+        PreferencesView(markSize: .constant(10))
+            .previewLayout(.fixed(width: 300, height: 145))
     }
 }

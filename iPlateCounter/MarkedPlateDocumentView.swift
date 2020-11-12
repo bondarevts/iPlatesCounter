@@ -121,10 +121,12 @@ struct NoImageView: View {
                     .aspectRatio(contentMode: .fit)
             }
             .foregroundColor(.gray)
-            .frame(width: geometry.size.width * 0.75)
+            .frame(width: geometry.size.width * widthScaleFactor)
             .position(CGPoint(from: geometry.size / 2))
         }
     }
+
+    private let widthScaleFactor: CGFloat = 0.75
 }
 
 struct ControlPanel: View {
@@ -136,8 +138,8 @@ struct ControlPanel: View {
     @State var showingPreferences = false
 
     var body: some View {
-        VStack {
-            HStack {
+        VStack(spacing: verticalBarsSpacing) {
+            HStack(spacing: horizontalElementsSpacing) {
                 Button(
                     action: { isPickerActive = true },
                     label: { Label("Open...", systemImage: "folder") }
@@ -154,15 +156,13 @@ struct ControlPanel: View {
                         .padding()
                     }
                 )
-                .contentShape(Rectangle())
-                .padding(.leading, 20)
                 .popover(isPresented: $showingPreferences) {
                     PreferencesView(markSize: $markSize, removeOnTap: $removeOnTap)
-                        .frame(width: 300, height: 145)
+                        .frame(size: preferencesPopoverSize)
                 }
             }
-            .padding(.bottom, 5)
-            HStack(spacing: 20) {
+            Divider()
+            HStack(spacing: horizontalElementsSpacing) {
                 Button(
                     action: { document.dropLastMark() },
                     label: { Image(systemName: "arrowshape.turn.up.backward.fill") }
@@ -183,8 +183,10 @@ struct ControlPanel: View {
                 Spacer()
                 Text("Total: \(document.marks.count)")
             }
+            Divider()
         }
         .padding(.horizontal)
+        .padding(.bottom, -verticalBarsSpacing)
         .font(.largeTitle)
     }
 
@@ -195,6 +197,10 @@ struct ControlPanel: View {
                 .map { mark in "\(Int(center.width + CGFloat(mark.x))),\(Int(center.height + CGFloat(mark.y))),\(Int(mark.diameter))" }
         )(separator: "\n")
     }
+
+    private let verticalBarsSpacing: CGFloat = 10
+    private let horizontalElementsSpacing: CGFloat = 20
+    private let preferencesPopoverSize = CGSize(width: 300, height: 145)
 }
 
 struct PreferencesView: View {
@@ -208,9 +214,9 @@ struct PreferencesView: View {
                 Text("Mark Diameter")
                 HStack {
                     Text("\(Int(markSize))")
-                        .frame(minWidth: 30, alignment: .leading)
+                        .frame(minWidth: minMarkSizeTextWidth, alignment: .leading)
                     Slider(value: $markSize, in: markSizeRange, step: 1)
-                        .frame(minWidth: 200)
+                        .frame(minWidth: minSliderLength)
                 }
             }
             Toggle(isOn: $removeOnTap) {
@@ -220,6 +226,9 @@ struct PreferencesView: View {
         .font(.subheadline)
         .padding()
     }
+
+    private let minMarkSizeTextWidth: CGFloat = 30
+    private let minSliderLength: CGFloat = 200
 }
 
 struct MarkedPlateDocumentView_Previews: PreviewProvider {

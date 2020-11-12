@@ -4,20 +4,20 @@ struct MarkedPlateDocumentView: View {
     @ObservedObject var document = MarkedPlateDocument()
     @State var isPickerActive = false
     @State var markSize: CGFloat = 30
+    @State var removeOnTap: Bool = false
     
     var body: some View {
         VStack {
             ControlPanel(
                 document: document,
                 isPickerActive: $isPickerActive,
-                markSize: $markSize
+                markSize: $markSize,
+                removeOnTap: $removeOnTap
             )
-            if let image = document.image {
-                PlatesView(marks: document.marks, image: image) { tap in
-                    document.addMark(at: tap, diameter: markSize)
-                }
-                .clipped()
-                .edgesIgnoringSafeArea([.horizontal, .bottom])
+            if document.image != nil {
+                PlatesView(document: document, markSize: $markSize, removeOnTap: $removeOnTap)
+                    .clipped()
+                    .edgesIgnoringSafeArea([.horizontal, .bottom])
             } else {
                 NoImageView()
                     .contentShape(Rectangle())
@@ -35,25 +35,30 @@ struct MarkedPlateDocumentView: View {
 
 struct PlatesView: View {
     private let markColor: Color = Color(red:0.0, green: 0.0, blue: 1.0, opacity: 0.4)
-    var marks: [MarkedPlate.Mark]
-    let image: UIImage
-    let onTap: (CGPoint) -> Void
+    @ObservedObject var document: MarkedPlateDocument
+    @Binding var markSize: CGFloat
+    @Binding var removeOnTap: Bool
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image(uiImage: image)
+                Image(uiImage: document.image!)
                     .scaleEffect(zoomScale)
                     .position(CGPoint(from: panOffset + geometry.size / 2))
                 DetectTapLocationView { tap in
-                    onTap(markLocation(tap: tap, size: geometry.size))
+                    document.addMark(at: markLocation(tap: tap, size: geometry.size), diameter: markSize)
                 }
-                ForEach(marks) { mark in
+                ForEach(document.marks) { mark in
                     Circle()
                         .frame(width: mark.size, height: mark.size)
                         .scaleEffect(zoomScale)
                         .position(self.position(for: mark, in: geometry.size))
                         .foregroundColor(markColor)
+                        .onTapGesture {
+                            if removeOnTap {
+                                document.removeMark(mark)
+                            }
+                        }
                 }
             }
         }
@@ -126,6 +131,7 @@ struct ControlPanel: View {
     @ObservedObject var document: MarkedPlateDocument
     @Binding var isPickerActive: Bool
     @Binding var markSize: CGFloat
+    @Binding var removeOnTap: Bool
     @State var showingRemoveAllAlert = false
     @State var showingPreferences = false
 
@@ -143,12 +149,15 @@ struct ControlPanel: View {
                 )
                 Button(
                     action: { showingPreferences = true },
-                    label: { Image(systemName: "ellipsis").imageScale(.large) }
+                    label: { Image(systemName: "ellipsis")
+                        .imageScale(.large)
+                        .padding()
+                    }
                 )
                 .contentShape(Rectangle())
                 .padding(.leading, 20)
                 .popover(isPresented: $showingPreferences) {
-                    PreferencesView(markSize: $markSize)
+                    PreferencesView(markSize: $markSize, removeOnTap: $removeOnTap)
                         .frame(width: 300, height: 145)
                 }
             }
@@ -191,6 +200,7 @@ struct ControlPanel: View {
 struct PreferencesView: View {
     private let markSizeRange: ClosedRange<CGFloat> = 1...100
     @Binding var markSize: CGFloat
+    @Binding var removeOnTap: Bool
 
     var body: some View {
         List {
@@ -203,6 +213,9 @@ struct PreferencesView: View {
                         .frame(minWidth: 200)
                 }
             }
+            Toggle(isOn: $removeOnTap) {
+                Text("Remove mark on click")
+            }
         }
         .font(.subheadline)
         .padding()
@@ -213,7 +226,7 @@ struct MarkedPlateDocumentView_Previews: PreviewProvider {
     static var previews: some View {
         MarkedPlateDocumentView()
 
-        PreferencesView(markSize: .constant(10))
+        PreferencesView(markSize: .constant(10), removeOnTap: .constant(true))
             .previewLayout(.fixed(width: 300, height: 145))
     }
 }

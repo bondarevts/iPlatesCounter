@@ -15,7 +15,11 @@ class MarkedPlateDocument: ObservableObject {
         guard self.image != nil else { return }
         plate.addMark(x: Int(center.x), y: Int(center.y), diameter: Double(diameter))
     }
-    
+
+    func removeMark(_ mark: MarkedPlate.Mark) {
+        plate.marks.removeAll { $0.id == mark.id }
+    }
+
     func dropLastMark() {
         _ = plate.marks.popLast()
     }

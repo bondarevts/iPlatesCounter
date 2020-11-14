@@ -7,7 +7,7 @@ struct DetectTapLocationView: UIViewRepresentable {
     var tappedCallback: ((CGPoint) -> Void)
 
     func makeUIView(context: UIViewRepresentableContext<DetectTapLocationView>) -> UIView {
-        let view = UIView(frame: .zero)
+        let view = UIView()
         view.addGestureRecognizer(
             UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.tapped))
         )
@@ -17,7 +17,7 @@ struct DetectTapLocationView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<DetectTapLocationView>) { }
     
     func makeCoordinator() -> DetectTapLocationView.Coordinator {
-        return Coordinator(tappedCallback:self.tappedCallback)
+        return Coordinator(tappedCallback: self.tappedCallback)
     }
     
     class Coordinator: NSObject {
@@ -31,5 +31,21 @@ struct DetectTapLocationView: UIViewRepresentable {
             let point = gesture.location(in: gesture.view)
             self.tappedCallback(point)
         }
+    }
+}
+
+struct LocatableTapGesture: ViewModifier {
+    let onTap: (CGPoint) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(DetectTapLocationView(tappedCallback: onTap))
+    }
+}
+
+
+extension View {
+    func onLocatableTapGesture(action: @escaping (CGPoint) -> Void) -> some View {
+        self.modifier(LocatableTapGesture(onTap: action))
     }
 }

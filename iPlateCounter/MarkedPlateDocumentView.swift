@@ -34,7 +34,7 @@ struct MarkedPlateDocumentView: View {
 
 
 struct PlatesView: View {
-    private let markColor: Color = Color(red:0.0, green: 0.0, blue: 1.0, opacity: 0.4)
+    private let markColor: Color = Color(red: 0.0, green: 0.0, blue: 1.0, opacity: 0.4)
     @ObservedObject var document: MarkedPlateDocument
     @Binding var markSize: CGFloat
     @Binding var removeOnTap: Bool
@@ -43,22 +43,22 @@ struct PlatesView: View {
         GeometryReader { geometry in
             ZStack {
                 Image(uiImage: document.image!)
-                    .scaleEffect(zoomScale)
+                    .onLocatableTapGesture { tap in
+                        document.addMark(at: tap, diameter: markSize)
+                    }
+                    .scaleEffect(zoomScale)  // scale should be applied before position
                     .position(CGPoint(from: panOffset + geometry.size / 2))
-                DetectTapLocationView { tap in
-                    document.addMark(at: markLocation(tap: tap, size: geometry.size), diameter: markSize)
-                }
                 ForEach(document.marks) { mark in
                     Circle()
-                        .frame(width: mark.size, height: mark.size)
-                        .scaleEffect(zoomScale)
-                        .position(self.position(for: mark, in: geometry.size))
                         .foregroundColor(markColor)
-                        .onTapGesture {
+                        .onLocatableTapGesture {tap in
                             if removeOnTap {
                                 document.removeMark(mark)
                             }
                         }
+                        .frame(width: mark.size, height: mark.size)
+                        .scaleEffect(zoomScale)  // scale should be applied before position
+                        .position(self.screenPosition(for: mark, in: geometry.size))
                 }
             }
         }
@@ -66,6 +66,11 @@ struct PlatesView: View {
         .gesture(self.panGesture())
         .gesture(self.zoomGesture())
     }
+
+    private func screenPosition(for mark: MarkedPlate.Mark, in size: CGSize) -> CGPoint {
+        return (mark.location.offset(with: -document.image!.size / 2) * zoomScale).offset(with: size / 2 + panOffset)
+    }
+
 
     @State private var steadyStateZoomScale: CGFloat = 1.0
     @GestureState private var gestureZoomScale: CGFloat = 1.0
@@ -99,14 +104,6 @@ struct PlatesView: View {
             .onEnded { finalDragGestureValue in
                 self.steadyStatePanOffset = self.steadyStatePanOffset + finalDragGestureValue.translation / zoomScale
             }
-    }
-
-    private func position(for mark: MarkedPlate.Mark, in size: CGSize) -> CGPoint {
-        (mark.location * zoomScale).offset(with: panOffset + size / 2)
-    }
-
-    private func markLocation(tap location: CGPoint, size: CGSize) -> CGPoint {
-        location.offset(with: -panOffset - size / 2) / zoomScale
     }
 }
 
@@ -191,11 +188,7 @@ struct ControlPanel: View {
     }
 
     func marksToString() -> String {
-        let center = document.image!.size / 2
-        return Array.joined(
-            document.marks
-                .map { mark in "\(Int(center.width + CGFloat(mark.x))),\(Int(center.height + CGFloat(mark.y))),\(Int(mark.diameter))" }
-        )(separator: "\n")
+        Array.joined(document.marks.map { "\($0.x),\($0.y),\(Int($0.diameter))" })(separator: "\n")
     }
 
     private let verticalBarsSpacing: CGFloat = 10

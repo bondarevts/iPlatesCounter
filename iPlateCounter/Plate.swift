@@ -12,7 +12,7 @@ struct MarkedPlate {
     
     struct Mark: Identifiable, Hashable {
         let id: Int
-        let x: Int  // mark center relative to the center of the image
+        let x: Int  // mark center relative to the top left corner of the image
         let y: Int
         let diameter: Double
         

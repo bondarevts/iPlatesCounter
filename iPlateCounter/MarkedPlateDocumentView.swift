@@ -54,6 +54,8 @@ struct PlatesView: View {
                         .onLocatableTapGesture {tap in
                             if removeOnTap {
                                 document.removeMark(mark)
+                            } else {
+                                document.addMark(at: mark.location + tap - mark.size / 2, diameter: markSize)
                             }
                         }
                         .frame(width: mark.size, height: mark.size)

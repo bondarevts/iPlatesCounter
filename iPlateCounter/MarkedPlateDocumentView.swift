@@ -52,7 +52,7 @@ struct PlatesView: View {
                     Circle()
                         .foregroundColor(markColor)
                         .onLocatableTapGesture {tap in
-                            if removeOnTap {
+                            if removeOnTap && isInsideCircle(tap, of: mark) {
                                 document.removeMark(mark)
                             } else {
                                 document.addMark(at: mark.location + tap - mark.size / 2, diameter: markSize)
@@ -73,6 +73,11 @@ struct PlatesView: View {
         return (mark.location.offset(with: -document.image!.size / 2) * zoomScale).offset(with: size / 2 + panOffset)
     }
 
+    private func isInsideCircle(_ topLeftCoordinate: CGPoint, of mark: MarkedPlate.Mark) -> Bool {
+        let radius = mark.size / 2
+        let vector = CGSize(width: radius - topLeftCoordinate.x, height: radius - topLeftCoordinate.y)
+        return vector.width * vector.width + vector.height * vector.height <= radius * radius
+    }
 
     @State private var steadyStateZoomScale: CGFloat = 1.0
     @GestureState private var gestureZoomScale: CGFloat = 1.0

@@ -43,40 +43,33 @@ struct PlatesView: View {
         GeometryReader { geometry in
             ZStack {
                 Image(uiImage: document.image!)
-                    .onLocatableTapGesture { tap in
-                        document.addMark(at: tap, diameter: markSize)
-                    }
                     .scaleEffect(zoomScale)  // scale should be applied before position
                     .position(CGPoint(from: panOffset + geometry.size / 2))
                 ForEach(document.marks) { mark in
                     Circle()
                         .foregroundColor(markColor)
-                        .onLocatableTapGesture {tap in
-                            if removeOnTap && isInsideCircle(tap, of: mark) {
-                                document.removeMark(mark)
-                            } else {
-                                document.addMark(at: mark.location + tap - mark.size / 2, diameter: markSize)
-                            }
+                        .allowsHitTesting(removeOnTap)
+                        .onTapGesture {
+                            document.removeMark(mark)
                         }
                         .frame(width: mark.size, height: mark.size)
                         .scaleEffect(zoomScale)  // scale should be applied before position
                         .position(self.screenPosition(for: mark, in: geometry.size))
                 }
             }
+            .contentShape(Rectangle())
+            .gesture(self.panGesture(in: geometry.size))
+            .gesture(self.zoomGesture())
         }
         .zIndex(-1)
-        .gesture(self.panGesture())
-        .gesture(self.zoomGesture())
     }
 
     private func screenPosition(for mark: MarkedPlate.Mark, in size: CGSize) -> CGPoint {
-        return (mark.location.offset(with: -document.image!.size / 2) * zoomScale).offset(with: size / 2 + panOffset)
+        (mark.location.offset(with: -document.image!.size / 2) * zoomScale).offset(with: size / 2 + panOffset)
     }
 
-    private func isInsideCircle(_ topLeftCoordinate: CGPoint, of mark: MarkedPlate.Mark) -> Bool {
-        let radius = mark.size / 2
-        let vector = CGSize(width: radius - topLeftCoordinate.x, height: radius - topLeftCoordinate.y)
-        return vector.width * vector.width + vector.height * vector.height <= radius * radius
+    private func markPosition(screenPosition: CGPoint, size: CGSize) -> CGPoint {
+        (screenPosition.offset(with: -panOffset - size / 2) / zoomScale).offset(with: document.image!.size / 2)
     }
 
     @State private var steadyStateZoomScale: CGFloat = 1.0
@@ -103,14 +96,22 @@ struct PlatesView: View {
         (steadyStatePanOffset + gesturePanOffset) * zoomScale
     }
 
-    private func panGesture() -> some Gesture {
-        DragGesture()
+    private func panGesture(in size: CGSize) -> some Gesture {
+        DragGesture(minimumDistance: 0)
             .updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, _ in
                 gesturePanOffset = latestDragGestureValue.translation / self.zoomScale
             }
             .onEnded { finalDragGestureValue in
-                self.steadyStatePanOffset = self.steadyStatePanOffset + finalDragGestureValue.translation / zoomScale
+                if isTapGesture(finalPanDistance: finalDragGestureValue.location - finalDragGestureValue.startLocation) {
+                    document.addMark(at: markPosition(screenPosition: finalDragGestureValue.location, size: size), diameter: markSize)
+                } else {
+                    self.steadyStatePanOffset = self.steadyStatePanOffset + finalDragGestureValue.translation / zoomScale
+                }
             }
+    }
+
+    private func isTapGesture(finalPanDistance distance: CGPoint) -> Bool {
+        return abs(distance.x) + abs(distance.y) < 10
     }
 }
 

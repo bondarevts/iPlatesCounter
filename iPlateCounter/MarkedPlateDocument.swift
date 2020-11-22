@@ -12,7 +12,7 @@ class MarkedPlateDocument: ObservableObject {
     var marks: [MarkedPlate.Mark] { plate.marks }
     
     func addMark(at center: CGPoint, diameter: CGFloat) {
-        guard self.image != nil else { return }
+        guard image != nil, 0..<image!.size.width ~= center.x, 0..<image!.size.height ~= center.y else { return }
         plate.addMark(x: Int(center.x), y: Int(center.y), diameter: Double(diameter))
     }
 

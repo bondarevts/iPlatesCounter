@@ -39,6 +39,10 @@ extension CGPoint {
         CGPoint(x: point1.x + point2.x, y: point1.y + point2.y)
     }
 
+    static func -(point1: Self, point2: CGPoint) -> CGPoint {
+        CGPoint(x: point1.x - point2.x, y: point1.y - point2.y)
+    }
+
     func offset(with size: CGSize) -> CGPoint {
         CGPoint(x: x + size.width, y: y + size.height)
     }

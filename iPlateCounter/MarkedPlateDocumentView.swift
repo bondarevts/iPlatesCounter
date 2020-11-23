@@ -156,10 +156,7 @@ struct ControlPanel: View {
                 )
                 Button(
                     action: { showingPreferences = true },
-                    label: { Image(systemName: "ellipsis")
-                        .imageScale(.large)
-                        .padding()
-                    }
+                    label: { Image(systemName: "gearshape.fill") }
                 )
                 .popover(isPresented: $showingPreferences) {
                     PreferencesView(markSize: $markSize, removeOnTap: $removeOnTap)

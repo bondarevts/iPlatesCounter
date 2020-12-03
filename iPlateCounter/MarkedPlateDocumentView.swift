@@ -113,7 +113,7 @@ struct PlatesView: View {
     }
 
     private func isTapGesture(finalPanDistance distance: CGPoint) -> Bool {
-        return abs(distance.x) + abs(distance.y) < 10
+        return abs(distance.x) + abs(distance.y) < 30
     }
 }
 

@@ -99,7 +99,9 @@ struct PlatesView: View {
     private func panGesture(in size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, _ in
-                gesturePanOffset = latestDragGestureValue.translation / self.zoomScale
+                if !isTapGesture(finalPanDistance: latestDragGestureValue.location - latestDragGestureValue.startLocation) {
+                    gesturePanOffset = latestDragGestureValue.translation / self.zoomScale
+                }
             }
             .onEnded { finalDragGestureValue in
                 if isTapGesture(finalPanDistance: finalDragGestureValue.location - finalDragGestureValue.startLocation) {
